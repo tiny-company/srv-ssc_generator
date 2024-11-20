@@ -1,5 +1,5 @@
 ARG ALPINE_VERSION=3.20
-FROM debian:${ALPINE_VERSION}
+FROM alpine:${ALPINE_VERSION}
 LABEL org.opencontainers.image.authors="ottomatic"
 ARG OPENSSL_APK_VERSION=3.3.2-r1.apk
 
