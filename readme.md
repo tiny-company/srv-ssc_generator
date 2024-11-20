@@ -20,6 +20,22 @@ A simple docker container Self Signed Certificate generator for testing purpose.
 >Note : these var can be added in a env file, see [env.example file](./example.env)
 
 2. Start the container using a volume to store generated key and certificate on the host :
+
+- using env file :
 ```
-docker run  --env-file .env
+cp example.env .env
+# edit .env
+docker run --env-file .env -v "<host_certs_path>:/srv/certs" tinycompany/ssc_generator:latest
+```
+
+- using env in command :
+```
+docker run --env CERT_COUNTRY=US \
+ CERT_STATE=California \
+ CERT_LOCALITY=San-Jose \
+ CERT_ORGANIZATION=tiny-company \
+ CERT_ORGANIZATIONAL_UNIT=IT \
+ CERT_COMMON_NAME=test \
+ -v "<host_certs_path>:/srv/certs" \
+ tinycompany/ssc_generator:latest
 ```
