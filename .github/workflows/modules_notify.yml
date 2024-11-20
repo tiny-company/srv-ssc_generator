@@ -11,57 +11,28 @@ env:
   ORGANIZATION: tinycompany
 
 jobs:
-  yamllint:
+  hadolint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: yamllint
-        uses: karancode/yamllint-github-action@master
+      - name: hadolint
+        uses: hadolint/hadolint-action@v3.1.0
         with:
-          yamllint_file_or_dir: ./resticprofile/
-          yamllint_strict: false
-          yamllint_comment: true
-          yamllint_config_filepath: "./.yamllint/.yamllint_conf"
+          dockerfile: Dockerfile
 
       - name: Discord failure notification
         if: failure()
         id: DiscordFail
         env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_BACKUP }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_OTHER }}
         uses: Ilshidur/action-discord@master
         with:
           args: 'The project ${{ github.event.repository.name }} has fail at step ${{ github.job.name }}. see more at : https://github.com/${{github.repository}}/actions/runs/${{ github.run_id }}'
-
-
-  shellcheck:
-    needs: yamllint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Run ShellCheck
-        uses: ludeeus/action-shellcheck@master
-        with:
-          scandir: ./
-          severity: error
-        env:
-          SHELLCHECK_OPTS: -e SC2145 -e SC1073 -e SC1065 -e SC1064
-
-      - name: Discord failure notification
-        if: failure()
-        id: DiscordFail
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_BACKUP }}
-        uses: Ilshidur/action-discord@master
-        with:
-          args: 'The project ${{ github.event.repository.name }} has fail at step ${{ github.job.name }}. see more at : https://github.com/${{github.repository}}/actions/runs/${{ github.run_id }}'
-
 
   build:
-    needs: shellcheck
+    needs: hadolint
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -124,14 +95,14 @@ jobs:
         if: failure()
         id: DiscordFail
         env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_BACKUP }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_OTHER }}
         uses: Ilshidur/action-discord@master
         with:
           args: 'The project ${{ github.event.repository.name }} has fail at step ${{ github.job.name }}. see more at : https://github.com/${{github.repository}}/actions/runs/${{ github.run_id }}'
 
 
   notify:
-    needs: [yamllint, shellcheck, build]
+    needs: [hadolint, build]
     runs-on: ubuntu-latest
     steps:
 
@@ -141,7 +112,7 @@ jobs:
       - name: Discord failure notification
         id: DiscordSuccess
         env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_BACKUP }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_OTHER }}
         uses: Ilshidur/action-discord@master
         with:
           args: 'The project ${{ github.event.repository.name }} successfully finished. see more at : https://github.com/${{github.repository}}/actions/runs/${{ github.run_id }}'
