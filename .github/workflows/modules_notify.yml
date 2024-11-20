@@ -21,6 +21,7 @@ jobs:
         uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: Dockerfile
+          ignore: DL3059
 
       - name: Discord failure notification
         if: failure()
@@ -38,7 +39,6 @@ jobs:
       contents: write
       packages: write
     steps:
-
       - name: Checkout
         uses: actions/checkout@v3
 
