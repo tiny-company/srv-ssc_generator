@@ -31,11 +31,11 @@ docker run --env-file .env -v "<host_certs_path>:/srv/certs" tinycompany/ssc_gen
 - using env in command :
 ```
 docker run --env CERT_COUNTRY=US \
- CERT_STATE=California \
- CERT_LOCALITY=San-Jose \
- CERT_ORGANIZATION=tiny-company \
- CERT_ORGANIZATIONAL_UNIT=IT \
- CERT_COMMON_NAME=test \
+ --env CERT_STATE=California \
+ --env CERT_LOCALITY=San-Jose \
+ --env CERT_ORGANIZATION=tiny-company \
+ --env CERT_ORGANIZATIONAL_UNIT=IT \
+ --env CERT_COMMON_NAME=test \
  -v "<host_certs_path>:/srv/certs" \
  tinycompany/ssc_generator:latest
 ```
